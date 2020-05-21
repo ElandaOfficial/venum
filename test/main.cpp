@@ -12,7 +12,7 @@ int main()
     
     // Looping through all constants of the virtual-enum (values() is an array of all registered constants)
     // Constants can only be fetched by const reference, copying is not possible.
-    for (const CarType::EnumConstant &val : CarType::values())
+    for (const CarType::VenumConstant &val : CarType::values())
     {
         // Prints the constant's name and corresponding ordinal
         // Will output: Mercedes: 0; Volkswagen: 1; RollsRoyce: 2;

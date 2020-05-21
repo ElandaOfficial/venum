@@ -172,7 +172,7 @@
 // Loop macros
 #define VENUM_INTERN_CONSTANT_DEF_COMMA(...) VENUM_INTERN_EXPAND(VENUM_INTERN_PREP_COMMA(__VA_ARGS__))
 #define VENUM_INTERN_CONSTANT_DEF(X, Y) \
-        EnumConstant(__NAMES[static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
+        VenumConstant(__NAMES[static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
                      static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X)) \
                      VENUM_INTERN_CONSTANT_DEF_COMMA(VENUM_INTERN_PAIR_VAL_2(X)))
 #define VENUM_INTERN_CONSTANT_REF(X, Y) &X = __DATA::__VALUES[static_cast<int>(__DATA::__ORDINALS::X)]
@@ -215,11 +215,11 @@ VENUM_INTERN_SECTOR_CONSTANT_CLASS(ID, (BODY), VENUM_INTERN_GET_CONSTEXPR(ATTRIB
 struct VENUM_INTERN_ENUM(ID) \
 { \
 private: \
-    template<class, class> friend class venum::EnumMap; \
+    template<class, class> friend class venum::VenumMap; \
     VENUM_INTERN_GET_ATTRIB(CTOR_UNIFORM, ATTRIBUTES)(VALUES) \
     \
 public: \
-    using EnumConstant = VENUM_INTERN_CONSTANT(ID); \
+    using VenumConstant = VENUM_INTERN_CONSTANT(ID); \
     \
 private: \
     VENUM_INTERN_SECTOR_DATA(ID, VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VALUES) \
@@ -228,7 +228,7 @@ public: \
     using ID = VENUM_INTERN_ENUM(ID); \
     VENUM_INTERN_SECTOR_TRAITS(VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES)) \
     static VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES) \
-           const std::array<EnumConstant, __DATA::__LENGTH> &values() noexcept { return __DATA::__VALUES; } \
+           const std::array<VenumConstant, __DATA::__LENGTH> &values() noexcept { return __DATA::__VALUES; } \
     VENUM_INTERN_SECTOR_CONSTANTS(VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VALUES) \
     VENUM_INTERN_SECTOR_BODY(ID, VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES)) \
     VENUM_INTERN_SECTOR_UTILITY(ID, VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES), \
@@ -236,7 +236,7 @@ public: \
                                 VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1, VALUES)) \
     \
 private: \
-    const EnumConstant *constantValue VENUM_DEFAULT_POINTER; \
+    const VenumConstant *constantValue VENUM_DEFAULT_POINTER; \
 }; \
 } \
 VENUM_INTERN_GET_ATTRIB(CTOR_PRIVATE, ATTRIBUTES)(ID, VALUES) \
@@ -255,9 +255,9 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
         { assert(constantValue && other.constantValue); return constantValue->ordinal() == other->ordinal(); } \
         CONSTEXPR bool operator!=(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal() != other->ordinal(); } \
-        CONSTEXPR bool operator==(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator==(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() == constant.ordinal(); } \
-        CONSTEXPR bool operator!=(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator!=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() != constant.ordinal(); } \
         CONSTEXPR bool operator>(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal()  > other->ordinal(); } \
@@ -267,13 +267,13 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
         { assert(constantValue && other.constantValue); return constantValue->ordinal()  < other->ordinal(); } \
         CONSTEXPR bool operator<=(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal() <= other->ordinal(); } \
-        CONSTEXPR bool operator>(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator>(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal()  > constant.ordinal(); } \
-        CONSTEXPR bool operator>=(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator>=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() >= constant.ordinal(); } \
-        CONSTEXPR bool operator<(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator<(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal()  < constant.ordinal(); } \
-        CONSTEXPR bool operator<=(const EnumConstant &constant) const noexcept \
+        CONSTEXPR bool operator<=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() <= constant.ordinal(); }
 
 #define VENUM_INTERN_SECTOR_TRAITS(ALLOW_NULL) \
@@ -284,7 +284,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 
 // Assignment and cast/return
 #define VENUM_INTERN_SECTOR_EXCHANGE(NAME, CONSTEXPR, ALLOW_NULL) \
-        CONSTEXPR NAME &operator=(const EnumConstant &constant) noexcept { constantValue = &constant; return *this; } \
+        CONSTEXPR NAME &operator=(const VenumConstant &constant) noexcept { constantValue = &constant; return *this; } \
         ALLOW_NULL(true)(CONSTEXPR NAME &operator=(std::nullptr_t) noexcept { constantValue = nullptr; return *this; }) \
         ALLOW_NULL(true)(CONSTEXPR explicit operator bool() const noexcept { return constantValue; }) \
         CONSTEXPR operator int() const noexcept { assert(constantValue); return constantValue->ordinal(); }
@@ -292,13 +292,13 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 // Construct
 #define VENUM_INTERN_SECTOR_CONSTRUCT(NAME, CONSTEXPR, ALLOW_NULL) \
         ALLOW_NULL(true)(VENUM_INTERN_ENUM(NAME)() noexcept = default;) \
-        CONSTEXPR VENUM_INTERN_ENUM(NAME)(const EnumConstant &constant) noexcept : constantValue(&constant) {} \
+        CONSTEXPR VENUM_INTERN_ENUM(NAME)(const VenumConstant &constant) noexcept : constantValue(&constant) {} \
         ALLOW_NULL(true)(CONSTEXPR VENUM_INTERN_ENUM(NAME)(std::nullptr_t) noexcept : constantValue(nullptr) {})
 
 // Resolve constant
 #define VENUM_INTERN_SECTOR_RESOLVE(CONSTEXPR) \
-        CONSTEXPR const EnumConstant &operator*()  const noexcept { assert(constantValue); return *constantValue; } \
-        CONSTEXPR const EnumConstant *operator->() const noexcept { assert(constantValue); return  constantValue; }
+        CONSTEXPR const VenumConstant &operator*()  const noexcept { assert(constantValue); return *constantValue; } \
+        CONSTEXPR const VenumConstant *operator->() const noexcept { assert(constantValue); return  constantValue; }
 
 // Default enum body
 #define VENUM_INTERN_SECTOR_BODY(NAME, CONSTEXPR, ALLOW_NULL) \
@@ -319,7 +319,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                 VENUM_INTERN_STRINGIFY(VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__)) \
             }; \
             \
-            static CONSTEXPR const std::array<EnumConstant, __LENGTH> __VALUES \
+            static CONSTEXPR const std::array<VenumConstant, __LENGTH> __VALUES \
             { \
                 VENUM_INTERN_FOR(VENUM_INTERN_CONSTANT_DEF, __VA_ARGS__) \
             };\
@@ -353,7 +353,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 // Enum constants
 #define VENUM_INTERN_SECTOR_CONSTANTS(CONSTEXPR, ...) VENUM_INTERN_EXPAND \
                                                       ( \
-                                                          static CONSTEXPR const EnumConstant VENUM_INTERN_FOR \
+                                                          static CONSTEXPR const VenumConstant VENUM_INTERN_FOR \
                                                           ( \
                                                               VENUM_INTERN_CONSTANT_REF, \
                                                               VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__) \
@@ -659,29 +659,66 @@ namespace venum
     };
     }
 
-template<class EnumType, class ValueType>
-class EnumMap
+template<class VenumType, class ValueType>
+class VenumMap
 {
 public:
     static_assert(std::is_default_constructible_v<ValueType>, "ValueType must be a DefaultConstructible type");
     
     //==================================================================================================================
-    /* struct Iterator
+    /*class VenumMapIterator
     {
-        using self_type         = Iterator;
-        using value_type        = std::pair<const typename EnumType::EnumConstant&, ValueType>;
-        using reference         = std::pair<const typename EnumType::EnumConstant&, ValueType&>;
-        using const_reference   = std::pair<const typename EnumType::EnumConstant&, const ValueType&>;
-        using pointer           = std::pair<const typename EnumType::EnumConstant&, ValueType*>;
-        using const_pointer     = std::pair<const typename EnumType::EnumConstant&, const ValueType*>;
-        using iterator_category = std::random_access_iterator_tag;
+    public:
+        using value_type        = ValueType;
         using difference_type   = int;
+        using reference         = value_type&;
+        using const_reference   = const value_type&;
+        using pointer           = value_type*;
+        using const_pointer     = const value_type*;
+        using iterator_category = std::random_access_iterator_tag;
+    
+        //==============================================================================================================
+        VenumMapIterator& operator++()
+        {
+            ++data;
+            ++position;
+            
+            return *this;
+        }
+    
+        VenumMapIterator operator++(int)
+        {
+            VenumMapIterator it(*this);
+            ++data;
+            ++position;
+            
+            return it;
+        }
+    
+        //==============================================================================================================
+        bool operator==(const VenumMapIterator &other) const noexcept
+        {
+            return data == other.data;
+        }
+    
+        bool operator!=(const VenumMapIterator &other) const noexcept
+        {
+            return data != other.data;
+        }
         
         
-    };*/
+        
+    private:
+        int position;
+        pointer data;
+    };
     
     //==================================================================================================================
-    ValueType& operator[](EnumType key) noexcept
+    using Iterator      = VenumMapIterator;
+    using ConstIterator = const VenumMapIterator;*/
+    
+    //==================================================================================================================
+    ValueType& operator[](VenumType key) noexcept
     {
         if (key.constantValue == nullptr)
         {
@@ -691,7 +728,7 @@ public:
         return data[key->ordinal()];
     }
     
-    const ValueType& operator[](EnumType key) const noexcept
+    const ValueType& operator[](VenumType key) const noexcept
     {
         if (key.constantValue == nullptr)
         {
@@ -701,12 +738,12 @@ public:
         return data[key->ordinal()];
     }
     
-    ValueType& operator[](const typename EnumType::EnumConstant &key) noexcept
+    ValueType& operator[](const typename VenumType::VenumConstant &key) noexcept
     {
         return data[key.ordinal()];
     }
     
-    const ValueType& operator[](const typename EnumType::EnumConstant &key) const noexcept
+    const ValueType& operator[](const typename VenumType::VenumConstant &key) const noexcept
     {
         return data[key.ordinal()];
     }
@@ -812,10 +849,10 @@ public:
 private:
     static constexpr int getEndLength() noexcept
     {
-        return EnumType::__DATA::__LENGTH + (EnumType::Traits::acceptsNullValues ? 1 : 0);
+        return VenumType::__DATA::__LENGTH + (VenumType::Traits::acceptsNullValues ? 1 : 0);
     }
     
-    std::array<ValueType, getEndLength()> data;
+    std::array<ValueType, getEndLength()> data {};
 };
 }
 //======================================================================================================================
