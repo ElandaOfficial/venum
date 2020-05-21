@@ -1,7 +1,7 @@
 ![venum.logo](https://i.imgur.com/raM6O1h.png)
 
 venum is an attempt to make enums more meaningful.
-The purpose of this library is not to polish up the existing concept of C/C++ venums,
+The purpose of this library is not to polish up the existing concept of C/C++ enums,
 but instead to create a new type of enums: venums
 
 Short for virtual-enum, venums try to give constants more data to play with.
@@ -52,11 +52,11 @@ this is done via macros.
 
 Below are the 3 macros that should be used for creating venums:
 
-| Macro                | Description                                                           |
-| -------------------- | --------------------------------------------------------------------- |
-| VENUM_CREATE         | Creates a simple venum with fixed constants.                          |
-| VENUM_CREATE_ASSOC   | Creates an associative venum with associated values.                  |
-| VENUM_BASE           | An utility macro used for overriding constructors in advanced venums. |
+| Macro                | Description                                                              |
+| -------------------- | ------------------------------------------------------------------------ |
+| VENUM_CREATE         | Creates a simple venum with fixed constants.                             |
+| VENUM_CREATE_ASSOC   | Creates an associative venum with associated values.                     |
+| VENUM_BASE           | An utility macro used for overriding constructors in associative venums. |
 
 Besides these macros there are also classes that allow to use venums for special situations:
 
