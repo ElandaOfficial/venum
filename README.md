@@ -204,8 +204,8 @@ VENUM_CREATE_ASSOC
     VALUES
     (
         (Samsumg)("Samsung", 400),
-        (IPhone) ("Apple",   10000),
-        (Nokia)  ("Nokia",   200),
+        (IPhone)("Apple",   10000),
+        (Nokia)("Nokia",   200),
         (Huaweii)("Huaweii", 10)
     ),
     BODY
@@ -222,7 +222,7 @@ VENUM_CREATE_ASSOC
     public:
         constexpr const char* getVendor() { return vendor; }
         constexpr int getPrice() { return price; }
-    )
+    ),
     ATTRIB
     (
         RETENTION(RUNTIME)
