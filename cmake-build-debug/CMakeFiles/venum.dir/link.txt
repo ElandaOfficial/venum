@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/venum.dir/test/main.cpp.o  -o venum 
