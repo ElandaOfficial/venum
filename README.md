@@ -23,7 +23,7 @@ Warning: This library defines a massive amount of macros that begin with VENUM_
 3. [Creation of venums](#creation-of-venums)
    * [Defining a simple venum](#defining-a-simple-venum)
    * [Defining an associative venum](#defining-an-associative-venum)
-      1 [ID and Values](#id-and-values)
+      1. [ID and Values](#id-and-values)
       2. [Body](#body)
       3. [Attributes](#attributes)
 4. [Making use of venums](#making-use-of-venums)
