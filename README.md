@@ -1,6 +1,6 @@
 ![venum.logo](https://i.imgur.com/raM6O1h.png)
 
-venum is an attempt to make venums more meaningful.
+venum is an attempt to make enums more meaningful.
 The purpose of this library is not to polish up the existing concept of C/C++ venums,
 but instead to create a new type of enums: venums
 
