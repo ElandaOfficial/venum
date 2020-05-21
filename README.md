@@ -1,6 +1,6 @@
 ![venum.logo](https://i.imgur.com/raM6O1h.png)
 
-venum is an attempt to make venums more meaningful.
+venum is an attempt to make enums more meaningful.
 The purpose of this library is not to polish up the existing concept of C/C++ venums,
 but instead to create a new type of enums: venums
 
@@ -23,7 +23,7 @@ Warning: This library defines a massive amount of macros that begin with VENUM_
 3. [Creation of venums](#creation-of-venums)
    * [Defining a simple venum](#defining-a-simple-venum)
    * [Defining an associative venum](#defining-an-associative-venum)
-      1 [ID and Values](#id-and-values)
+      1. [ID and Values](#id-and-values)
       2. [Body](#body)
       3. [Attributes](#attributes)
 4. [Making use of venums](#making-use-of-venums)
@@ -147,7 +147,7 @@ BODY
 (
 private:
     constexpr PhoneTypeConstant(const char *name, int ordinal, const char *vendor, int price)
-        : venum_BASE(name, ordinal)
+        : VENUM_BASE(name, ordinal)
     {}
 )
 ```
@@ -164,7 +164,7 @@ determined by the first constant.
 As you probably already noticed, we also added two other parameters to the constructor *name* and *ordinal*, these
 are important to be written as the first two arguments, as they are responsible for
 passing the constant's name and ordinal to the constant.  
-The venum_BASE(name, ordinal) is just a convenience define so that you don't need to
+The VENUM_BASE(name, ordinal) is just a convenience define so that you don't need to
 assign the first two parameters yourself.
 
 Another thing to note is that the constructor is private, this is intentional because
@@ -204,8 +204,8 @@ VENUM_CREATE_ASSOC
     VALUES
     (
         (Samsumg)("Samsung", 400),
-        (IPhone) ("Apple",   10000),
-        (Nokia)  ("Nokia",   200),
+        (IPhone)("Apple",   10000),
+        (Nokia)("Nokia",   200),
         (Huaweii)("Huaweii", 10)
     ),
     BODY
@@ -222,7 +222,7 @@ VENUM_CREATE_ASSOC
     public:
         constexpr const char* getVendor() { return vendor; }
         constexpr int getPrice() { return price; }
-    )
+    ),
     ATTRIB
     (
         RETENTION(RUNTIME)
@@ -259,5 +259,3 @@ or a nullptr that is found to be equivalent to this string.
 
 Note that if a venum doesn't accept null-constants,
 this will throw an exception if no constant with the specified name was found.
-
-### 
