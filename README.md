@@ -14,7 +14,7 @@ rather the fact that VEnums simulate enums and are not real enums.
 Warning: This library defines a massive amount of macros that begin with VENUM_
          so be sure that you don't use any of these besides the below mentioned ones.
 
-## Installation
+# Installation
 Installation is pretty darn easy. Nothing more than including the venum core header and that's it.
 The cmake file included is for running the test included in this repo, which you can find in
 the folder denoted as "test"
@@ -28,7 +28,7 @@ cd build
 cmake ..
 ```
 
-## Getting Started
+# Getting Started
 The VEnum library tries to make enum creation as simple as possible. Since VEnum classes are huge
 this is done via macros.
 
@@ -46,8 +46,8 @@ Besides these macros there are also classes that allow to use VEnums for special
 | ------- | ------------------------------------------------------ |
 | EnumMap | An array that maps VEnum constants to a set of values. |
 
-## Usage
-### Defining a simple VEnum
+# Usage
+## Defining a simple VEnum
 To define a simple enum which doesn't associate any special values
 to its constants we can do the following:
 ```C++
@@ -62,7 +62,7 @@ VENUM_CREATE(CarType
 It's as simple as that, nothing more has to be done.
 You now have access to the CarType enum and its constants. (more below)
 
-### Defining an associative VEnum
+## Defining an associative VEnum
 Creating an associative VEnum is slightly more work than creating a simple VEnum,
 difficulty is the same however.
 ```C++
@@ -95,6 +95,7 @@ But unfortunately, just putting values in there would do more harm than good, as
 where to put them to interpret them correctly.  
 For exactly this reason we introduce another important keyword: **BODY**
 
+### BODY
 The body keyword is there for giving constants additional information about data it
 has and can hold.
 
@@ -141,8 +142,10 @@ VEnums have an internal checking mechanism whether constructors are private or p
 This is a safety mechanism so the user can't create any new constants and use them which
 could result in undefined behaviour if not used correctly.
 
+### Attributes
 One last thing we didn't discuss now is *attributes*!  
-Attributes are a refined way of chaning the behaviour of VEnum creation.  
+Attributes are a refined way of chaning the behaviour of VEnum creation.
+
 For the time beeing, there are only 4 attributes that are available:
 
 | Attribute    | Description                                                                         | Values        |
@@ -182,7 +185,8 @@ VENUM_CREATE_ASSOC
         const int price {};
 
         constexpr PhoneTypeConstant(const char *name, int ordinal, const char *vendor, int price)
-            : VENUM_BASE(name, ordinal)
+            : VENUM_BASE(name, ordinal),
+              vendor(vendor), price(price)
         {}
 
     public:
