@@ -147,7 +147,7 @@ BODY
 (
 private:
     constexpr PhoneTypeConstant(const char *name, int ordinal, const char *vendor, int price)
-        : venum_BASE(name, ordinal)
+        : VENUM_BASE(name, ordinal)
     {}
 )
 ```
@@ -164,7 +164,7 @@ determined by the first constant.
 As you probably already noticed, we also added two other parameters to the constructor *name* and *ordinal*, these
 are important to be written as the first two arguments, as they are responsible for
 passing the constant's name and ordinal to the constant.  
-The venum_BASE(name, ordinal) is just a convenience define so that you don't need to
+The VENUM_BASE(name, ordinal) is just a convenience define so that you don't need to
 assign the first two parameters yourself.
 
 Another thing to note is that the constructor is private, this is intentional because
