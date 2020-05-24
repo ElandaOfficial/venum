@@ -68,7 +68,7 @@ Besides these macros there are also classes that allow to use venums for special
 ## Venum
 A venum is, similar to a trivial enum, collection of constants. Other than enums, though,
 they cannot hold values that are not defined in them (optimally) and store additional data that trivial enums do not.
-
+A venum can hold up to 100 constants.
 
 ## Constants
 Constants are the heart of every venum.
