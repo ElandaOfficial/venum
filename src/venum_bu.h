@@ -173,7 +173,7 @@
 // Loop macros
 #define VENUM_INTERN_CONSTANT_DEF_COMMA(...) VENUM_INTERN_EXPAND(VENUM_INTERN_PREP_COMMA(__VA_ARGS__))
 #define VENUM_INTERN_CONSTANT_DEF(X, Y) \
-        ConstantType(__NAMES[static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
+        VenumConstant(__NAMES[static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
                      static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X)) \
                      VENUM_INTERN_CONSTANT_DEF_COMMA(VENUM_INTERN_PAIR_VAL_2(X)))
 #define VENUM_INTERN_CONSTANT_REF(X, Y) &X = __DATA::__VALUES[static_cast<int>(__DATA::__ORDINALS::X)]
@@ -225,7 +225,7 @@ private: \
     VENUM_INTERN_GET_ATTRIB(CTOR_UNIFORM, ATTRIBUTES)(VALUES) \
     \
 public: \
-    using ConstantType = VENUM_INTERN_CONSTANT(ID); \
+    using VenumConstant = VENUM_INTERN_CONSTANT(ID); \
     \
 private: \
     VENUM_INTERN_SECTOR_DATA(ID, VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VALUES) \
@@ -234,7 +234,7 @@ public: \
     using ID = VENUM_INTERN_ENUM(ID); \
     VENUM_INTERN_SECTOR_TRAITS(VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES), VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES)) \
     static VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES) \
-           const std::array<ConstantType, __DATA::__LENGTH> &values() noexcept { return __DATA::__VALUES; } \
+           const std::array<VenumConstant, __DATA::__LENGTH> &values() noexcept { return __DATA::__VALUES; } \
     VENUM_INTERN_SECTOR_CONSTANTS(VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VALUES) \
     VENUM_INTERN_SECTOR_BODY(ID, VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES)) \
     VENUM_INTERN_SECTOR_UTILITY(ID, VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES), \
@@ -242,7 +242,7 @@ public: \
                                 VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1, VALUES)) \
     \
 private: \
-    const ConstantType *constantValue VENUM_DEFAULT_POINTER; \
+    const VenumConstant *constantValue VENUM_DEFAULT_POINTER; \
 }; \
 } \
 VENUM_INTERN_GET_ATTRIB(CTOR_PRIVATE, ATTRIBUTES)(ID, VALUES) \
@@ -261,9 +261,9 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
         { assert(constantValue && other.constantValue); return constantValue->ordinal() == other->ordinal(); } \
         CONSTEXPR bool operator!=(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal() != other->ordinal(); } \
-        CONSTEXPR bool operator==(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator==(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() == constant.ordinal(); } \
-        CONSTEXPR bool operator!=(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator!=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() != constant.ordinal(); } \
         CONSTEXPR bool operator>(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal()  > other->ordinal(); } \
@@ -273,13 +273,13 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
         { assert(constantValue && other.constantValue); return constantValue->ordinal()  < other->ordinal(); } \
         CONSTEXPR bool operator<=(const NAME &other) const noexcept \
         { assert(constantValue && other.constantValue); return constantValue->ordinal() <= other->ordinal(); } \
-        CONSTEXPR bool operator>(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator>(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal()  > constant.ordinal(); } \
-        CONSTEXPR bool operator>=(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator>=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() >= constant.ordinal(); } \
-        CONSTEXPR bool operator<(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator<(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal()  < constant.ordinal(); } \
-        CONSTEXPR bool operator<=(const ConstantType &constant) const noexcept \
+        CONSTEXPR bool operator<=(const VenumConstant &constant) const noexcept \
         { assert(constantValue); return constantValue->ordinal() <= constant.ordinal(); }
 
 #define VENUM_INTERN_SECTOR_TRAITS(ALLOW_NULL, CONSTEXPR) \
@@ -291,7 +291,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 
 // Assignment and cast/return
 #define VENUM_INTERN_SECTOR_EXCHANGE(NAME, CONSTEXPR, ALLOW_NULL) \
-        CONSTEXPR NAME &operator=(const ConstantType &constant) noexcept { constantValue = &constant; return *this; } \
+        CONSTEXPR NAME &operator=(const VenumConstant &constant) noexcept { constantValue = &constant; return *this; } \
         ALLOW_NULL(true)(CONSTEXPR NAME &operator=(std::nullptr_t) noexcept { constantValue = nullptr; return *this; }) \
         ALLOW_NULL(true)(CONSTEXPR explicit operator bool() const noexcept { return constantValue; }) \
         explicit CONSTEXPR operator int() const noexcept { assert(constantValue); return constantValue->ordinal(); }
@@ -299,13 +299,13 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 // Construct
 #define VENUM_INTERN_SECTOR_CONSTRUCT(NAME, CONSTEXPR, ALLOW_NULL) \
         ALLOW_NULL(true)(VENUM_INTERN_ENUM(NAME)() noexcept = default;) \
-        CONSTEXPR VENUM_INTERN_ENUM(NAME)(const ConstantType &constant) noexcept : constantValue(&constant) {} \
+        CONSTEXPR VENUM_INTERN_ENUM(NAME)(const VenumConstant &constant) noexcept : constantValue(&constant) {} \
         ALLOW_NULL(true)(CONSTEXPR VENUM_INTERN_ENUM(NAME)(std::nullptr_t) noexcept : constantValue(nullptr) {})
 
 // Resolve constant
 #define VENUM_INTERN_SECTOR_RESOLVE(CONSTEXPR) \
-        CONSTEXPR const ConstantType &operator*()  const noexcept { assert(constantValue); return *constantValue; } \
-        CONSTEXPR const ConstantType *operator->() const noexcept { assert(constantValue); return  constantValue; }
+        CONSTEXPR const VenumConstant &operator*()  const noexcept { assert(constantValue); return *constantValue; } \
+        CONSTEXPR const VenumConstant *operator->() const noexcept { assert(constantValue); return  constantValue; }
 
 // Default enum body
 #define VENUM_INTERN_SECTOR_BODY(NAME, CONSTEXPR, ALLOW_NULL) \
@@ -326,7 +326,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                 VENUM_INTERN_STRINGIFY(VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__)) \
             }; \
             \
-            static CONSTEXPR const std::array<ConstantType, __LENGTH> __VALUES \
+            static CONSTEXPR const std::array<VenumConstant, __LENGTH> __VALUES \
             { \
                 VENUM_INTERN_FOR(VENUM_INTERN_CONSTANT_DEF, __VA_ARGS__) \
             };\
@@ -360,7 +360,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 // Enum constants
 #define VENUM_INTERN_SECTOR_CONSTANTS(CONSTEXPR, ...) VENUM_INTERN_EXPAND \
                                                       ( \
-                                                          static CONSTEXPR const ConstantType VENUM_INTERN_FOR \
+                                                          static CONSTEXPR const VenumConstant VENUM_INTERN_FOR \
                                                           ( \
                                                               VENUM_INTERN_CONSTANT_REF, \
                                                               VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__) \
@@ -698,100 +698,95 @@ inline constexpr VenumType clamp(VenumType val, VenumType from, VenumType to) no
     return val > max ? max : (val < min ? min : val);
 }
 
-/**
- *  A simple lightweight map for venum declarations.
- *  This map implementation will map values to constants, since there is only a given amount of constants this
- *  implementation uses a fixed-size array as underlying container, thus will always occupy the max amount of data
- *  it can hold.
- *
- *  @tparam VenumType The venum
- *  @tparam ValueType The type to map
- */
 template<class VenumType, class ValueType>
 class VenumMap
 {
-    static constexpr int getEndLength() noexcept
-    {
-        return VenumType::__DATA::__LENGTH + (VenumType::Traits::acceptsNullValues ? 1 : 0);
-    }
-    
-    using DataMap = std::array<std::pair<VenumType, ValueType>, getEndLength()>;
-    
-    //==================================================================================================================
-    static constexpr bool canBeNull = VenumType::Traits::acceptsNullValues;
-    
 public:
     static_assert(std::is_default_constructible_v<ValueType>, "ValueType must be a DefaultConstructible type");
     
     //==================================================================================================================
-    using Iterator             = typename DataMap::iterator;
-    using ConstIterator        = typename DataMap::const_iterator;
-    using ReverseIterator      = typename DataMap::reverse_iterator;
-    using ConstReverseIterator = typename DataMap::const_reverse_iterator;
-    
-    //==================================================================================================================
-    /**
-     *  Constructs a VenumMap with all constant associated default values of type ValueType.
-     */
-    constexpr VenumMap() noexcept = default;
-    
-    /**
-     *  Constructs a VenumMap with all the given values.
-     *  Note that the internal array will only accept that many values of the given initializer_list as it can hold.
-     *
-     *  @param values The values to store for the constants.
-     */
-    constexpr VenumMap(std::initializer_list<ValueType> values) noexcept
+    /*class VenumMapIterator
     {
-        for (auto it = values.begin(); it != values.end(); ++it)
+    public:
+        using value_type        = ValueType;
+        using difference_type   = int;
+        using reference         = value_type&;
+        using const_reference   = const value_type&;
+        using pointer           = value_type*;
+        using const_pointer     = const value_type*;
+        using iterator_category = std::random_access_iterator_tag;
+    
+        //==============================================================================================================
+        VenumMapIterator& operator++()
         {
-            const int dist = std::distance(it, values.begin());
+            ++data;
+            ++position;
             
-            if (dist >= data.size())
-            {
-                break;
-            }
-            
-            data[dist].second = *it;
+            return *this;
         }
-    }
     
-    //==================================================================================================================
-    constexpr ValueType& operator[](VenumType key) noexcept
-    {
-        if constexpr(canBeNull)
+        VenumMapIterator operator++(int)
         {
-            if (key.constantValue == nullptr)
-            {
-                return data[data.size() - 1].second;
-            }
+            VenumMapIterator it(*this);
+            ++data;
+            ++position;
+            
+            return it;
+        }
+    
+        //==============================================================================================================
+        bool operator==(const VenumMapIterator &other) const noexcept
+        {
+            return data == other.data;
+        }
+    
+        bool operator!=(const VenumMapIterator &other) const noexcept
+        {
+            return data != other.data;
         }
         
-        return data[key->ordinal()].second;
-    }
+        
+        
+    private:
+        int position;
+        pointer data;
+    };
     
-    constexpr const ValueType& operator[](VenumType key) const noexcept
+    //==================================================================================================================
+    using Iterator      = VenumMapIterator;
+    using ConstIterator = const VenumMapIterator;*/
+    
+    //==================================================================================================================
+    ValueType& operator[](VenumType key) noexcept
     {
-        if constexpr(canBeNull)
+        if (key.constantValue == nullptr)
         {
-            if (key.constantValue == nullptr)
-            {
-                return data[data.size() - 1].second;
-            }
+            return data[data.size() - 1];
         }
         
         return data[key->ordinal()];
     }
     
-    constexpr ValueType& operator[](const typename VenumType::ConstantType &key) noexcept
+    const ValueType& operator[](VenumType key) const noexcept
     {
-        return data[key.ordinal()].second;
+        if (key.constantValue == nullptr)
+        {
+            return data[data.size() - 1];
+        }
+        
+        return data[key->ordinal()];
     }
     
-    constexpr const ValueType& operator[](const typename VenumType::ConstantType &key) const noexcept
+    ValueType& operator[](const typename VenumType::VenumConstant &key) noexcept
     {
-        return data[key.ordinal()].second;
+        return data[key.ordinal()];
     }
+    
+    const ValueType& operator[](const typename VenumType::VenumConstant &key) const noexcept
+    {
+        return data[key.ordinal()];
+    }
+
     
     //==================================================================================================================
     /**
@@ -799,26 +794,29 @@ public:
      */
     constexpr void clear() noexcept
     {
-        DataMap empty_map;
-        std::swap(data, empty_map);
+        std::fill_n(data.begin(), data.end(), ValueType());
     }
     
     //==================================================================================================================
     /**
-     *  Returns true if the map doesn't contain any constants.
-     *  Note that this will only be true if the given venum doesn't contain any constants.
-     *
+     *  Returns true if either the enum contains no constants or all mapped constants have default values.
      *  @return True if defaulted or empty
      */
     constexpr bool empty() const noexcept
     {
-        return data.empty();
+        for (auto &value : data)
+        {
+            if (value != ValueType())
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /**
      *  Gets the size of the map.
-     *  Usually, this will return the venums amount of constants (+1 if the venum allows null constants).
-     *
      *  @return The size
      */
     constexpr int size() const noexcept
@@ -827,200 +825,71 @@ public:
     }
     
     //==================================================================================================================
-    constexpr Iterator begin() noexcept { return data.begin(); }
-    constexpr Iterator end()   noexcept { return data.end(); }
+    auto begin() noexcept { return data.begin(); }
+    auto end()   noexcept { return data.end(); }
     
-    constexpr ConstIterator begin() const noexcept { return data.begin(); }
-    constexpr ConstIterator end()   const noexcept { return data.end();}
+    auto begin() const noexcept { return data.begin(); }
+    auto end()   const noexcept { return data.end();}
     
-    constexpr ConstIterator cbegin() const noexcept { return data.cbegin(); }
-    constexpr ConstIterator cend()   const noexcept { return data.cend(); }
+    auto rbegin() noexcept { return data.rbegin(); }
+    auto rend()   noexcept { return data.rend(); }
     
-    constexpr ReverseIterator rbegin() noexcept { return data.rbegin(); }
-    constexpr ReverseIterator rend()   noexcept { return data.rend(); }
+    auto rbegin() const noexcept { return data.rbegin(); }
+    auto rend()   const noexcept { return data.rend(); }
     
-    constexpr ConstReverseIterator rbegin() const noexcept { return data.rbegin(); }
-    constexpr ConstReverseIterator rend()   const noexcept { return data.rend(); }
+    auto cbegin() const noexcept { return data.cbegin(); }
+    auto cend()   const noexcept { return data.cend(); }
     
-    constexpr ConstReverseIterator crbegin() const noexcept { return data.crbegin(); }
-    constexpr ConstReverseIterator crend()   const noexcept { return data.crend(); }
+    auto crbegin() const noexcept { return data.crbegin(); }
+    auto crend()   const noexcept { return data.crend(); }
     
 private:
-    DataMap data;
+    static constexpr int getEndLength() noexcept
+    {
+        return VenumType::__DATA::__LENGTH + (VenumType::Traits::acceptsNullValues ? 1 : 0);
+    }
+    
+    std::array<ValueType, getEndLength()> data {};
 };
 
-/**
- *  A simple lightweight set for venum declarations.
- *  This set implementation will map values to bits at positions that matches the constants ordinals, since there is
- *  only a given amount of constants this implementation uses a bitset as underlying container, thus will always
- *  occupy the max amount of data it can hold.
- *
- *  Note that while VenumMap allows null-constants, VenumSet does not.
- *
- *  @tparam VenumType The venum
- */
 template<class VenumType>
 class VenumSet
 {
-    //==================================================================================================================
-    using DataSet = std::bitset<VenumType::__DATA::__LENGTH>;
-    
-    //==================================================================================================================
-    static constexpr bool canBeNull = VenumType::Traits::acceptsNullValues;
-    
-    //==================================================================================================================
-    template<class T>
-    static constexpr int getOrdinalResponsive(const T &object) noexcept
-    {
-        if constexpr(std::is_same_v<VenumType, T>)
-        {
-            return object->ordinal();
-        }
-        
-        return object.ordinal();
-    }
-    
 public:
-    //==================================================================================================================
-    class VenumSetIterator
+    static constexpr VenumSet allOf() noexcept
     {
-        //==============================================================================================================
-        using IteratorType = decltype(VenumType::values().begin());
-
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using difference_type   = int;
-        using value_type        = VenumType;
-        using reference         = value_type;
-        using pointer           = value_type;
-    
-        //==============================================================================================================
-        VenumSetIterator() = default;
-    
-        VenumSetIterator(const DataSet &data, int position) noexcept
-            : position(position), data(&data)
-        {}
-    
-        //==============================================================================================================
-        bool operator==(const VenumSetIterator &other) const noexcept
-        {
-            return position == other.position && data == other.data;
-        }
-    
-        bool operator!=(const VenumSetIterator &other) const noexcept
-        {
-            return position != other.position || data != other.data;
-        }
-    
-        //==============================================================================================================
-        reference operator*() const
-        {
-            auto iterator = (*data)[position] ? Iterator_Start + position : nullptr;
-            assert(iterator);
-            return *iterator;
-        }
-    
-        pointer operator->() const
-        {
-            auto iterator = (*data)[position] ? Iterator_Start + position : nullptr;
-            assert(iterator);
-            return *iterator;
-        }
-    
-        //==============================================================================================================
-        VenumSetIterator& operator++()
-        {
-            while (++position < data->size() && !(*data)[position]);
-            return *this;
-        }
-    
-        VenumSetIterator operator++(int)
-        {
-            VenumSetIterator it (*this);
-            ++(*this);
-            return it;
-        }
-    
-        VenumSetIterator& operator--()
-        {
-            while (--position >= 0 && !(*data)[position]);
-            return *this;
-        }
-    
-        VenumSetIterator operator--(int)
-        {
-            VenumSetIterator it (*this);
-            --position;
-            return it;
-        }
-
-    private:
-        friend class VenumSet;
+        VenumSet set;
         
-        //==============================================================================================================
-        static constexpr IteratorType Iterator_Start = VenumType::values().begin();
-    
-        //==============================================================================================================
-        int position { 0 };
-        const DataSet *data { nullptr };
-    };
-    
-    //==================================================================================================================
-    using ConstantType    = typename VenumType::ConstantType;
-    using Iterator        = VenumSetIterator;
-    using ReverseIterator = std::reverse_iterator<Iterator>;
-    
-    //==================================================================================================================
-    /**
-     *  Gets a new VenumSet with all constants set.
-     *  @return A full set
-     */
-    constexpr static VenumSet all() noexcept
-    {
-        VenumSet set(DataSet().set());
-        set.msb = VenumType::values().size() - 1;
-        return set;
-    }
-    
-    /**
-     *  Gets a new VenumSet that contains the opposite constants of the given VenumSet.
-     *  This mean, constants that are set will be remove and the other way around.
-     *
-     *  @param other The other VenumSet to invert
-     *  @return The complemented VenumSet
-     */
-    constexpr static VenumSet complementOf(const VenumSet &other) noexcept
-    {
-        VenumSet set(DataSet(other.data).flip());
-        
-        for (int i = (set.data.size() - 1); i >= 0; --i)
+        for(auto &constant : VenumType::values())
         {
-            if (set.data[i])
-            {
-                set.msb = i;
-                break;
-            }
+            set.data[constant.ordinal()] = true;
         }
         
         return set;
     }
     
-    /**
-     *  Gets a new VenumSet from a range of constants.
-     *
-     *  @param from The first point of the range of constants to add
-     *  @param to   The second point of the range of constants to add
-     */
-    constexpr static VenumSet range(VenumType from, VenumType to) noexcept
+    static constexpr VenumSet complementOf(const VenumSet &other) noexcept
     {
-        if constexpr (canBeNull)
+        return { std::move(~other.data) };
+    }
+    
+    template<template<class...> class Container>
+    static constexpr VenumSet copyOf(const Container<VenumType> &container) noexcept
+    {
+        VenumSet set;
+        
+        for (auto &constant : container)
         {
-            if (from == nullptr || to == nullptr)
-            {
-                return {};
-            }
+            assert(constant != nullptr); // Can't dereference nullptr
+            set.data[constant->ordinal()] = true;
         }
         
+        return set;
+    }
+    
+    static constexpr VenumSet rangeOf(VenumType from, VenumType to) noexcept
+    {
+        assert(from != nullptr && to != nullptr); // Can't dereference nullptr
         const int end = max(from, to)->ordinal();
         VenumSet set;
         
@@ -1029,248 +898,37 @@ public:
             set.data[i] = true;
         }
         
-        set.msb = end;
-        
         return set;
     }
     
     //==================================================================================================================
-    /**
-     *  Constructs a new VenumSet without any set constants.
-     */
     VenumSet() = default;
     
-    /**
-     *  Constructs a new VenumSet from a container full of constants and adopts these.
-     *  Null-constants will be ignored.
-     *
-     *  @tparam Container The container type
-     *  @param container The container to adopt the constants from
-     */
-    template<template<class...> class Container>
-    explicit VenumSet(const Container<VenumType> &container)
+    /*template<class ...Constants>
+    constexpr VenumSet(const Constants &...constants) noexcept
     {
-        for (auto &constant : container)
-        {
-            if constexpr (canBeNull)
-            {
-                if (constant == nullptr)
-                {
-                    continue;
-                }
-            }
-            
-            const int ordinal = constant->ordinal();
-            
-            if (ordinal > msb)
-            {
-                msb = ordinal;
-            }
-            
-            data[ordinal] = true;
-        }
-    }
-    
-    /**
-     *  Constructs a new VenumSet from a list of constants.
-     *  @tparam Constants The constant type
-     *  @param constants The constant list to adopt
-     */
-    template<class ...Constants>
-    VenumSet(const Constants &...constants) noexcept
-    {
-        static_assert((std::is_same_v<ConstantType, Constants> &&...),
-                      "Constructor values must be all of the venum's constant type");
-        
         for (auto &constant : { &constants... })
         {
-            const int ordinal = constant->ordinal();
-    
-            if (ordinal > msb)
-            {
-                msb = ordinal;
-            }
-            
-            data[ordinal] = true;
+            data[constant->ordinal()] = true;
         }
+    }*/
+
+    constexpr VenumSet(std::initializer_list<std::reference_wrapper<const typename VenumType::VenumConstant>> list) noexcept
+    {
+    
     }
     
     //==================================================================================================================
-    /**
-     *  Adds a constant to the set.
-     *  Null-constants will be ignored and return an empty iterator.
-     *
-     *  @tparam VenumConstant The type of constant
-     *  @param constant The constant to add
-     *  @return A pair consisting of an iterator pointing to the element and a boolean denoting whether the element
-     *          was freshly inserted or not
-     */
-    template<class VenumConstant>
-    std::pair<Iterator, bool> emplace(VenumConstant &&constant) noexcept
-    {
-        if constexpr (std::is_same_v<VenumType, VenumConstant> && canBeNull)
-        {
-            if (constant == nullptr)
-            {
-                return std::make_pair(Iterator(), false);
-            }
-        }
-        
-        const int ordinal = getOrdinalResponsive(constant);
-        
-        if (ordinal > msb)
-        {
-            msb = ordinal;
-        }
-        
-        auto bitref = data[ordinal];
-        
-        return std::make_pair(Iterator(data, ordinal), !std::exchange(bitref, true));
-    }
     
-    //==================================================================================================================
-    /**
-     *  Removes a constant from the set.
-     *
-     *  @param position The iterator pointing to the element which should be removed
-     *  @return An iterator pointing to the next element
-     */
-    Iterator erase(Iterator position) noexcept
-    {
-        if (position.position == msb)
-        {
-            Iterator temp(position);
-            msb = std::max(0, --temp.position);
-        }
-        
-        data[position.position] = false;
-        return ++position;
-    }
-    
-    /**
-     *  Removes a range of constants from the set.
-     *
-     *  @param first The start iterator pointing to the element range which should be removed
-     *  @param last  The end iterator pointing to the element range which should be removed
-     *  @return An iterator pointing to the next element
-     */
-    Iterator erase(Iterator first, Iterator last) noexcept
-    {
-        assert(last.position < end().position && first.position >= begin().position);
-        
-        if (msb >= first.position && msb < last.position)
-        {
-            Iterator temp(first);
-            msb = std::max(0, --temp.position);
-        }
-        
-        while (first != last)
-        {
-            data[first.position] = false;
-            ++first;
-        }
-        
-        return ++first;
-    }
-    
-    /**
-     *  Removes a constant from the set with the given key.
-     *
-     *  @param key The constant to remove
-     *  @return 0 if no such element was found 1 if there was a constant that was removed
-     */
-    int erase(VenumType key)
-    {
-        assert(key != nullptr); // cannot dereference nullptr
-        
-        const int ordinal = key->ordinal();
-        
-        if (data[ordinal])
-        {
-            erase(Iterator(data, ordinal));
-            return 1;
-        }
-        
-        return 0;
-    }
-    
-    //==================================================================================================================
-    /**
-     *  Removes all constants from the set.
-     */
-    void clear() noexcept
-    {
-        data.reset();
-        msb = 0;
-    }
-    
-    //==================================================================================================================
-    /**
-     *  Determines whether the constant was found or not.
-     *
-     *  @param constant The constant to search for
-     *  @return True if such a constant was found, false if not
-     */
-    bool contains(VenumType constant) const noexcept
-    {
-        if constexpr (canBeNull)
-        {
-            if (constant == nullptr)
-            {
-                return false;
-            }
-        }
-        
-        return data[constant->ordinal()];
-    }
-    
-    /**
-     *  Gets whether the set contains no constants.
-     *  @return True if there are no constants set, false if
-     */
-    bool empty() const noexcept
-    {
-        return data.none();
-    }
-    
-    //==================================================================================================================
-    /**
-     *  Gets the amount of set constants.
-     *  @return The amounf of constants
-     */
-    int size() const noexcept
-    {
-        return data.count();
-    }
-    
-    //==================================================================================================================
-    Iterator begin() const noexcept
-    {
-        const int first_index = data._Find_first();
-        return Iterator(data, first_index < data.size() ? first_index : 0);
-    }
-    
-    Iterator end() const noexcept
-    {
-        return Iterator(data, empty() ? 0 : msb + 1);
-    }
-    
-    ReverseIterator rbegin() const noexcept
-    {
-        return ReverseIterator(end());
-    }
-    
-    ReverseIterator rend() const noexcept
-    {
-        return ReverseIterator(begin());
-    }
     
 private:
-    DataSet data;
-    int msb { 0 };
+    using DataSet = std::bitset<VenumType::__DATA::__LENGTH>;
     
     //==================================================================================================================
-    explicit constexpr VenumSet(DataSet bitset) noexcept
+    DataSet data;
+    
+    //==================================================================================================================
+    constexpr VenumSet(DataSet &&bitset) noexcept
         : data(std::move(bitset))
     {}
 };

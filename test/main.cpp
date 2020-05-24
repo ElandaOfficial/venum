@@ -5,14 +5,16 @@
 #include "advanced_venum_example.h" // An advanced virtual-enum declaration
 #include "enummap_example.h"        // Showcases the use of an EnumMap in combination with virtual-enums
 
+#define VENUM_UNIT_TEST 0
+
 int main()
 {
-    std::cout << "======= Enum CarType constants: " << std::endl;
+    std::cout << std::endl << "======= Venum CarType constants: " << std::endl;
     std::cout << "Value array CarType: ";
     
     // Looping through all constants of the virtual-enum (values() is an array of all registered constants)
     // Constants can only be fetched by const reference, copying is not possible.
-    for (const CarType::VenumConstant &val : CarType::values())
+    for (const CarType::ConstantType &val : CarType::values())
     {
         // Prints the constant's name and corresponding ordinal
         // Will output: Mercedes: 0; Volkswagen: 1; RollsRoyce: 2;
@@ -23,7 +25,7 @@ int main()
             << "; ";
     }
     
-    std::cout << std::endl << std::endl << "======= Enum CarType initialisation: " << std::endl;
+    std::cout << std::endl << std::endl << "======= Venum CarType initialisation: " << std::endl;
     
     // The default constructor may null-initialise or not initialise the
     // virtual-enum variable at all. (depending on the VENUM_DEFAULT_INITIALISE define)
@@ -66,8 +68,7 @@ int main()
     // will print true as simple enums always accept null constants
     std::cout << "Is null a valid constant: " << (CarType::Traits::acceptsNullValues ? "true" : "false") << std::endl;
     
-    std::cout << std::endl << "======= EnumMap CarType: " << std::endl;
-    showcase_enummap(); // EnumMap output
-    
+    showcase_venummap(); // VenumMap output
+    showcase_venumset(); // VenumSet output
     return 0;
 }

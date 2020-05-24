@@ -24,7 +24,7 @@ VENUM_CREATE_ASSOC
     ID(PhoneType),
     VALUES
     (
-        (Samsumg)("Samsung", 400),
+        (Samsung)("Samsung", 400),
         (IPhone) ("Apple",   10000),
         (Nokia)  ("Nokia",   200),
         (Huaweii)("Huaweii", 10)
@@ -67,7 +67,7 @@ VENUM_CREATE_ASSOC
         // if this is set to CLASS, we are not allowed to use any arguments that are not eligible for beeing used
         // in a constant expression, as this will constexpr qualify the virtual-enum
         // if you need to use non-constexpr classes, we specify this as RUNTIME (default: CLASS)
-        RETENTION(CLASS),
+        RETENTION(RUNTIME),
         
         // if we set this to false, the virtual-enum is not allowed to accept a nullptr constant and hides
         // all operators that have anything to do with nullptr (default: true)
