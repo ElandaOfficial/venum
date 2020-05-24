@@ -63,6 +63,7 @@ Besides these macros there are also classes that allow to use venums for special
 | Class    | Description                                             |
 | -------- | ------------------------------------------------------- |
 | VenumMap | An array that maps venum constants to a set of values.  |
+| VenumSet | A set that contains a fixed amount of constants.        |
 
 ## Venum
 A venum is, similar to a trivial enum, collection of constants. Other than enums, though,
