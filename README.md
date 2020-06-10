@@ -15,8 +15,8 @@ Warning: This library defines a massive amount of macros that begin with VENUM_
          so be sure that you don't use any of these besides the below mentioned ones.
 
 
-<details>
-    <summary><h1>Table Of Contents</h1></summary>
+# Table of contents
+<details><summary>Click to expand</summary>
          
 1. [Installation](#installation)
 2. [Getting Started](#getting-started)
