@@ -15,22 +15,26 @@ Warning: This library defines a massive amount of macros that begin with VENUM_
          so be sure that you don't use any of these besides the below mentioned ones.
 
 # Table of contents
-1. [Installation](#installation)
-2. [Getting Started](#getting-started)
-   * [Tools](#tools)
-   * [Venum](#venum)
-   * [Constants](#constants)
-3. [Creation of venums](#creation-of-venums)
-   * [Defining a simple venum](#defining-a-simple-venum)
-   * [Defining an associative venum](#defining-an-associative-venum)
-      1. [ID and Values](#id-and-values)
-      2. [Body](#body)
-      3. [Attributes](#attributes)
-4. [Making use of venums](#making-use-of-venums)
-   * [Get constant data](#get-constant-data)
-   * [Get all constants](#get-all-constants)
-   * [Get constant from name](#get-constant-from-name)
-5. [Known Issues](#known-issues)
+<details>
+    <summary> Table of contents </summary>
+         
+    1. [Installation](#installation)
+    2. [Getting Started](#getting-started)
+       * [Tools](#tools)
+       * [Venum](#venum)
+       * [Constants](#constants)
+    3. [Creation of venums](#creation-of-venums)
+       * [Defining a simple venum](#defining-a-simple-venum)
+       * [Defining an associative venum](#defining-an-associative-venum)
+          1. [ID and Values](#id-and-values)
+          2. [Body](#body)
+          3. [Attributes](#attributes)
+    4. [Making use of venums](#making-use-of-venums)
+       * [Get constant data](#get-constant-data)
+       * [Get all constants](#get-all-constants)
+       * [Get constant from name](#get-constant-from-name)
+    5. [Known Issues](#known-issues)
+</details>
 
 # Installation
 Installation is pretty darn easy. Nothing more than including the venum core header and that's it.
