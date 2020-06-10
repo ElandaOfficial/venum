@@ -30,6 +30,7 @@ Warning: This library defines a massive amount of macros that begin with VENUM_
    * [Get constant data](#get-constant-data)
    * [Get all constants](#get-all-constants)
    * [Get constant from name](#get-constant-from-name)
+5. [Known Issues](#known-issues)
 
 # Installation
 Installation is pretty darn easy. Nothing more than including the venum core header and that's it.
@@ -260,3 +261,6 @@ or a nullptr that is found to be equivalent to this string.
 
 Note that if a venum doesn't accept null-constants,
 this will throw an exception if no constant with the specified name was found.
+
+# Known Issues
+- The MSVC-Compiler does not have any support for optional preceding commas in variadic macro expansions, due to this the library will most likely not work on Windows with the MSVC compiler with any standard below C++20. (C++20 standard proposes \_\_VA_OPT\_\_ as a fix for this)
