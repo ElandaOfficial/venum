@@ -14,9 +14,9 @@ rather the fact that venums simulate enums and are not real enums.
 Warning: This library defines a massive amount of macros that begin with VENUM_
          so be sure that you don't use any of these besides the below mentioned ones.
 
-# Table of contents
+
 <details>
-    <summary> Click to expand </summary>
+         <summary><h1> Click to expand </h1></summary>
          
 1. [Installation](#installation)
 2. [Getting Started](#getting-started)
