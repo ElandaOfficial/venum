@@ -8,6 +8,8 @@
 
 int main()
 {
+    using garage::CarType;
+
     std::cout << std::endl << "======= Venum CarType constants: " << std::endl;
     std::cout << "Value array CarType: ";
     

@@ -205,7 +205,7 @@
 
 #define VENUM_INTERN_UNICTOR_PARPACK(X) VENUM_INTERN_MAKE_PARPACK_TYPES(VENUM_INTERN_PAIR_VAL_2(X))
 #define VENUM_INTERN_UNICTOR_ASSERT(X, Y) \
-        venum::type_traits::isConstructibleFromArgs<Unictor>(VENUM_INTERN_PAIR_VAL_2(X))
+        ::venum::type_traits::isConstructibleFromArgs<Unictor>(VENUM_INTERN_PAIR_VAL_2(X))
 
 #define VENUM_INTERN_GET_CONSTEXPR(...) VENUM_INTERN_GET_ATTRIB(RETENTION, __VA_ARGS__)
 
@@ -220,8 +220,8 @@ VENUM_INTERN_SECTOR_CONSTANT_CLASS(ID, (BODY), VENUM_INTERN_GET_CONSTEXPR(ATTRIB
 struct VENUM_INTERN_ENUM(ID) \
 { \
 private: \
-    template<class, class> friend class venum::VenumMap; \
-    template<class> friend class venum::VenumSet; \
+    template<class, class> friend class ::venum::VenumMap; \
+    template<class> friend class ::venum::VenumSet; \
     VENUM_INTERN_GET_ATTRIB(CTOR_UNIFORM, ATTRIBUTES)(VALUES) \
     \
 public: \
@@ -369,7 +369,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                                            
 #define VENUM_INTERN_SECTOR_UNISON_CTOR_DEF(...) VENUM_INTERN_EXPAND \
                                                  ( \
-                                                     using Unictor = venum::type_traits::unisonConstructor \
+                                                     using Unictor = ::venum::type_traits::unisonConstructor \
                                                                      < \
                                                                             VENUM_INTERN_UNICTOR_PARPACK \
                                                                             ( \
@@ -382,7 +382,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                                                    ( \
                                                        static_assert \
                                                        ( \
-                                                           venum::type_traits::allAreTrue \
+                                                           ::venum::type_traits::allAreTrue \
                                                            < \
                                                                VENUM_INTERN_FOR \
                                                                ( \

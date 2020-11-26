@@ -5,6 +5,8 @@
 
 void showcase_venummap()
 {
+  using garage::CarType;
+
     std::cout << std::endl << "======= VenumMap CarType: " << std::endl;
     
     // Declaring a venum map which maps constants to doubles
@@ -26,6 +28,7 @@ void showcase_venummap()
 
 void showcase_venumset()
 {
+    using garage::CarType;
     std::cout << std::endl << "======= VenumSet<CarType> values: " << std::endl;
     
     venum::VenumSet<CarType> car_set;
