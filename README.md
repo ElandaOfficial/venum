@@ -47,7 +47,7 @@ exporters and build your project:
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake -DCOMPILE_TESTS=ON ..
 ```
 
 # Getting Started
