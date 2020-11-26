@@ -6,6 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("${CMAKE_CURRENT_LIST_DIR}/include")
 
-if (COMMAND COMPILE_TESTS)
+if (COMPILE_TESTS)
     add_executable(venum test/main.cpp)
 endif()

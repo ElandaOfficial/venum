@@ -1,3 +1,8 @@
+#pragma once
+
+#include "simple_venum_example.h"
+#include <iostream>
+
 void showcase_venummap()
 {
     std::cout << std::endl << "======= VenumMap CarType: " << std::endl;
