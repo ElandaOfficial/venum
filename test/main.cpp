@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "venum.h"
+
 #include "simple_venum_example.h"   // A simple virtual-enum declaration
 #include "advanced_venum_example.h" // An advanced virtual-enum declaration
 #include "enummap_example.h"        // Showcases the use of an EnumMap in combination with virtual-enums

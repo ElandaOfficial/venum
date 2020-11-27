@@ -1,8 +1,5 @@
 #pragma once
 
-#include "simple_venum_example.h"
-#include <iostream>
-
 void showcase_venummap()
 {
   using garage::CarType;
@@ -17,12 +14,14 @@ void showcase_venummap()
     prices[CarType::Volkswagen] = 8000.28;
     prices[CarType::RollsRoyce] = 100000.00;
     
-    // even nullptr is a valid assignable constant, but only if the virtual-enum is nullable
+    // even nullptr is a valid assignable constant, but only if the venum is nullable
     prices[nullptr] = 0.0;
     
     for (auto &val : prices)
     {
-        std::cout << val.first->name() << ": " << val.second << std::endl;
+        // Let's not try to get a null dereference problem
+        const std::string name = val.first ? val.first->name() : "null";
+        std::cout << name << ": " << val.second << std::endl;
     }
 }
 

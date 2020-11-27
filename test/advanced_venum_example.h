@@ -1,7 +1,5 @@
 #pragma once
 
-#include "venum.h"
-
 // Creates an associative virtual-enum, other than a simple virtual-enum, this way you can go further into the matter
 // and specify various attributes and associated values with it.
 // ID specifies the name of the enum, VALUES the constants
