@@ -141,10 +141,10 @@
                                        VENUM_INTERN_OVERLOAD(VENUM_INTERN_CUT_LAST, __VA_ARGS__) \
                                    )
                                    
-#define VENUM_INTERN_IF_TRUE(X) X
-#define VENUM_INTERN_IF_FALSE(X)
-#define VENUM_INTERN_IF_NOT_TRUE(X)
-#define VENUM_INTERN_IF_NOT_FALSE(X) X
+#define VENUM_INTERN_IF_true(X) X
+#define VENUM_INTERN_IF_false(X)
+#define VENUM_INTERN_IF_NOT_true(X)
+#define VENUM_INTERN_IF_NOT_false(X) X
 
 #define VENUM_INTERN_IF_CAT(COND) VENUM_INTERN_CONCAT(VENUM_INTERN_IF_, COND)
 #define VENUM_INTERN_IF(COND, ACTION) VENUM_INTERN_IF_CAT(COND) (ACTION)
@@ -152,8 +152,8 @@
 #define VENUM_INTERN_IF_NOT_CAT(COND) VENUM_INTERN_CONCAT(VENUM_INTERN_IF_NOT_, COND)
 #define VENUM_INTERN_IF_NOT(COND, ACTION) VENUM_INTERN_IF_NOT_CAT(COND) (ACTION)
 
-#define VENUM_INTERN_IF_ELSE(COND, TRUE_ACT, FALSE_ACT) \
-        VENUM_INTERN_IF(COND, TRUE_ACT) VENUM_INTERN_IF_NOT(COND, FALSE_ACT)
+#define VENUM_INTERN_IF_ELSE(COND, true_ACT, false_ACT) \
+        VENUM_INTERN_IF(COND, true_ACT) VENUM_INTERN_IF_NOT(COND, false_ACT)
 
 //======================================================================================================================
 // endregion intern
@@ -177,10 +177,13 @@
 // Loop macros
 #define VENUM_INTERN_CONSTANT_DEF_COMMA(...) VENUM_INTERN_EXPAND(VENUM_INTERN_PREP_COMMA(__VA_ARGS__))
 #define VENUM_INTERN_CONSTANT_DEF(X, Y) \
-        ConstantType(__NAMES[static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
-                     static_cast<int>(__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X)) \
+        ConstantType(__DATA::__NAMES[static_cast<int>(__DATA::__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X))], \
+                     static_cast<int>(__DATA::__ORDINALS::VENUM_INTERN_PAIR_VAL_1(X)) \
                      VENUM_INTERN_CONSTANT_DEF_COMMA(VENUM_INTERN_PAIR_VAL_2(X)))
-#define VENUM_INTERN_CONSTANT_REF(X, Y) &X = __DATA::__VALUES[static_cast<int>(__DATA::__ORDINALS::X)]
+#define VENUM_INTERN_CONSTANT_REF(X, Y) VENUM_INTERN_PAIR_VAL_1(X) = VENUM_INTERN_CONSTANT_DEF(X, Y)
+
+
+
 #define VENUM_INTERN_CONSTANT_GET_BODY(...) VENUM_INTERN_EXPAND(VENUM_INTERN_PREP_COMMA(__VA_ARGS__))
 #define VENUM_INTERN_TRIVIAL_CONST(X, Y) (X)()
 
@@ -189,7 +192,7 @@
                                                              !std::is_constructible_v \
                                                              < \
                                                                  venum::enum_defs:: VENUM_INTERN_CONSTANT(Y), \
-                                                                 const char*, int VENUM_INTERN_PREP_COMMA(Z) \
+                                                                 const std::string_view, int VENUM_INTERN_PREP_COMMA(Z) \
                                                              >, \
                                                              VENUM_INTERN_STRINGIFY(VENUM_INTERN_PAIR_VAL_1(X)) \
                                                              "'s constructor is public which is not " \
@@ -221,7 +224,7 @@
 namespace venum::enum_defs \
 { \
 VENUM_INTERN_SECTOR_CONSTANT_CLASS(ID, (BODY), VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES)) \
-struct VENUM_INTERN_ENUM(ID) \
+class VENUM_INTERN_ENUM(ID) \
 { \
 private: \
     template<class, class> friend class ::venum::VenumMap; \
@@ -236,10 +239,12 @@ private: \
     \
 public: \
     using ID = VENUM_INTERN_ENUM(ID); \
+    using TParam = const ConstantType&; \
     VENUM_INTERN_SECTOR_TRAITS(VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES), VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES)) \
-    static VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES) \
-           const std::array<ConstantType, __DATA::__LENGTH> &values() noexcept { return __DATA::__VALUES; } \
     VENUM_INTERN_SECTOR_CONSTANTS(VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VALUES) \
+    static VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES) \
+           const std::array<::venum::ConstReferenceWrapper<ID>, __DATA::__LENGTH> values \
+           { VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, VALUES) }; \
     VENUM_INTERN_SECTOR_BODY(ID, VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES)) \
     VENUM_INTERN_SECTOR_UTILITY(ID, VENUM_INTERN_GET_ATTRIB(NULL_CONST, ATTRIBUTES), \
                                 VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES), \
@@ -297,7 +302,7 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 #define VENUM_INTERN_SECTOR_EXCHANGE(NAME, CONSTEXPR, ALLOW_NULL) \
         CONSTEXPR NAME &operator=(const ConstantType &constant) noexcept { constantValue = &constant; return *this; } \
         ALLOW_NULL(true)(CONSTEXPR NAME &operator=(std::nullptr_t) noexcept { constantValue = nullptr; return *this; }) \
-        ALLOW_NULL(true)(CONSTEXPR explicit operator bool() const noexcept { return constantValue; }) \
+        ALLOW_NULL(true)(CONSTEXPR operator bool() const noexcept { return constantValue; }) \
         explicit CONSTEXPR operator int() const noexcept { assert(constantValue); return constantValue->ordinal(); }
 
 // Construct
@@ -325,15 +330,10 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
             \
             enum class __ORDINALS { VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__) }; \
             \
-            static CONSTEXPR const std::array<const char*, __LENGTH> __NAMES \
+            static CONSTEXPR const std::array<const std::string_view, __LENGTH> __NAMES \
             { \
                 VENUM_INTERN_STRINGIFY(VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__)) \
             }; \
-            \
-            static CONSTEXPR const std::array<ConstantType, __LENGTH> __VALUES \
-            { \
-                VENUM_INTERN_FOR(VENUM_INTERN_CONSTANT_DEF, __VA_ARGS__) \
-            };\
         }; \
         )
 
@@ -341,17 +341,17 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
         class VENUM_INTERN_CONSTANT(NAME) \
         { \
         public: \
-            CONSTEXPR const char *name() const noexcept { return nameValue; } \
+            CONSTEXPR const std::string_view name() const noexcept { return nameValue; } \
             CONSTEXPR int ordinal() const noexcept { return ordinalValue; } \
             CONSTEXPR operator int() const noexcept { return ordinalValue; } \
             \
         private: \
             friend class VENUM_INTERN_ENUM(NAME); \
             \
-            const char *const nameValue; \
+            std::string_view const nameValue; \
             const int ordinalValue; \
             \
-            CONSTEXPR VENUM_INTERN_CONSTANT(NAME)(const char *name, int ordinal) noexcept \
+            CONSTEXPR VENUM_INTERN_CONSTANT(NAME)(std::string_view name, int ordinal) noexcept \
                 : nameValue(name), ordinalValue(ordinal) {} \
             VENUM_INTERN_CONSTANT(NAME)() = delete; \
             VENUM_INTERN_CONSTANT(NAME)(const VENUM_INTERN_CONSTANT(NAME)&) = default; \
@@ -367,10 +367,11 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                                                           static CONSTEXPR const ConstantType VENUM_INTERN_FOR \
                                                           ( \
                                                               VENUM_INTERN_CONSTANT_REF, \
-                                                              VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__) \
+                                                              __VA_ARGS__ \
                                                           ) \
                                                       );
-                                           
+//VENUM_INTERN_FOR(VENUM_INTERN_PAIR_VAL_1L, __VA_ARGS__)
+
 #define VENUM_INTERN_SECTOR_UNISON_CTOR_DEF(...) VENUM_INTERN_EXPAND \
                                                  ( \
                                                      using Unictor = ::venum::type_traits::unisonConstructor \
@@ -397,42 +398,34 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
                                                        ) \
                                                    );
 
-#define VENUM_INTERN_SECTOR_UTILITY(NAME, ALLOW_NULL, CONSTEXPR, VALUES) \
-        static CONSTEXPR NAME valueOf(const char *name) ALLOW_NULL(true)(noexcept) \
-        { \
-            if (name == nullptr) \
-                ALLOW_NULL(true)(return nullptr;) \
-                ALLOW_NULL(false)(throw std::logic_error(VENUM_INTERN_STRINGIFY(NAME) \
-                                                         " doesn't accept null constants!")); \
-            \
-            for (int i = 0; i < __DATA::__LENGTH; ++i) \
-            { \
-                const char *iname = __DATA::__NAMES[i]; \
-                int char_count    = 0;\
-                bool equals       = false; \
-                \
-                for (;;) \
-                { \
-                    const char ch_name  = name [char_count]; \
-                    const char ch_iname = iname[char_count++];\
-                    \
-                    if (!ch_name || !ch_iname) \
-                    { \
-                        equals = (ch_name == ch_iname); \
-                        break; \
-                    } \
-                    \
-                    if (ch_name != ch_iname) break; \
-                } \
-                \
-                if (!equals) continue; \
-                \
-                return __DATA::__VALUES[i]; \
-            } \
-            \
-            ALLOW_NULL(true)(return nullptr;) \
-            ALLOW_NULL(false)(throw std::logic_error(VENUM_INTERN_STRINGIFY(NAME) " doesn't contain any constants " \
-                                                     "with the specified name!")); \
+#define VENUM_INTERN_SECTOR_UTILITY(NAME, ALLOW_NULL, CONSTEXPR, VALUES)                                               \
+        static CONSTEXPR NAME valueOf(std::string_view name, bool ignoreCase = false) ALLOW_NULL(true)(noexcept)       \
+        {                                                                                                              \
+            for (int i = 0; i < __DATA::__LENGTH; ++i)                                                                 \
+            {                                                                                                          \
+                const std::string_view const_name = __DATA::__NAMES[i];                                                \
+                bool found = true;                                                                                     \
+                                                                                                                       \
+                if (const_name.length() != name.length()) continue;                                                    \
+                                                                                                                       \
+                for (int j = 0; j < const_name.length(); ++j)                                                          \
+                {                                                                                                      \
+                    const char n = (ignoreCase ? std::tolower(name[i])       : name[i]);                               \
+                    const char c = (ignoreCase ? std::tolower(const_name[i]) : const_name[i]);                         \
+                                                                                                                       \
+                    if (n != c)                                                                                        \
+                    {                                                                                                  \
+                        found = false;                                                                                 \
+                        break;                                                                                         \
+                    }                                                                                                  \
+                }                                                                                                      \
+                                                                                                                       \
+                if (found) return values[i].get();                                                                     \
+            }                                                                                                          \
+                                                                                                                       \
+            ALLOW_NULL(true)(return nullptr;)                                                                          \
+            ALLOW_NULL(false)(throw std::logic_error(VENUM_INTERN_STRINGIFY(NAME) " doesn't contain any constants "    \
+                                                     "with the specified name!"));                                     \
         }
         
 #define VENUM_INTERN_SECTOR_PUBLIC_CTOR_CHECK(NAME, ...) VENUM_INTERN_EXPAND \
@@ -585,8 +578,8 @@ using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
 #define VENUM_INTERN_ATTRIB_RETENTION_DEFAULT()    VENUM_INTERN_ATTRIB_RETENTION_CLASS()
 #define VENUM_INTERN_ATTRIB_NULL_CONST_DEFAULT()   VENUM_INTERN_ATTRIB_NULL_CONST_true
 
-#define VENUM_INTERN_COND_HAS_ATTRIB_0(...) FALSE
-#define VENUM_INTERN_COND_HAS_ATTRIB_1(...) TRUE
+#define VENUM_INTERN_COND_HAS_ATTRIB_0(...) false
+#define VENUM_INTERN_COND_HAS_ATTRIB_1(...) true
 #define VENUM_INTERN_COND_HAS_ATTRIB_R(...) VENUM_INTERN_EXPAND \
                                             ( \
                                                 VENUM_INTERN_OVERLOAD(VENUM_INTERN_COND_HAS_ATTRIB, __VA_ARGS__) \
@@ -669,7 +662,21 @@ namespace venum
             constexpr unisonConstructor() noexcept {}
         };
     }
-
+    
+    template<class T>
+    class ConstReferenceWrapper
+    {
+    public:
+        using ConstantType = typename T::ConstantType;
+        
+        constexpr ConstReferenceWrapper(const ConstantType &value) : value(value) {}
+        constexpr operator T() const noexcept { return value; }
+        constexpr T get() const noexcept { return value; }
+        constexpr const ConstantType* operator->() const { return &value; }
+    private:
+        const ConstantType &value;
+    };
+    
     template<class VenumType>
     inline constexpr int distance(VenumType from, VenumType to) noexcept
     {
@@ -740,7 +747,7 @@ namespace venum
          */
         constexpr VenumMap() noexcept
         {
-            for (const auto &value : VenumType::values())
+            for (const auto &value : VenumType::values)
             {
                 data[value.ordinal()] = std::make_pair<VenumType, ValueType>(value, ValueType());
             }
@@ -884,18 +891,6 @@ namespace venum
     
         //==============================================================================================================
         static constexpr bool canBeNull = VenumType::Traits::acceptsNullValues;
-    
-        //==============================================================================================================
-        template<class T>
-        static constexpr int getOrdinalResponsive(const T &object) noexcept
-        {
-            if constexpr(std::is_same_v<VenumType, T>)
-            {
-                return object->ordinal();
-            }
-            
-            return object.ordinal();
-        }
         
     public:
         //==============================================================================================================
@@ -907,15 +902,15 @@ namespace venum
             using value_type        = VenumType;
             using reference         = value_type;
             using pointer           = value_type;
-        
-            //==============================================================================================================
+    
+            //==========================================================================================================
             VenumSetIterator() = default;
         
             VenumSetIterator(const DataSet &data, int position) noexcept
                 : position(position), data(&data)
             {}
-        
-            //==============================================================================================================
+    
+            //==========================================================================================================
             bool operator==(const VenumSetIterator &other) const noexcept
             {
                 return position == other.position && data == other.data;
@@ -925,8 +920,8 @@ namespace venum
             {
                 return position != other.position || data != other.data;
             }
-        
-            //==============================================================================================================
+    
+            //==========================================================================================================
             reference operator*() const
             {
                 auto iterator = (*data)[position] ? Iterator_Start + position : nullptr;
@@ -940,8 +935,8 @@ namespace venum
                 assert(iterator);
                 return *iterator;
             }
-        
-            //==============================================================================================================
+    
+            //==========================================================================================================
             VenumSetIterator& operator++()
             {
                 while (++position < data->size() && !(*data)[position]);
@@ -970,14 +965,14 @@ namespace venum
     
         private:
             friend class VenumSet;
-        
-            //==============================================================================================================
-            using IteratorType = decltype(VenumType::values().begin());
-        
-            //==============================================================================================================
-            static constexpr IteratorType Iterator_Start = VenumType::values().begin();
-        
-            //==============================================================================================================
+    
+            //==========================================================================================================
+            using IteratorType = decltype(VenumType::values.begin());
+    
+            //==========================================================================================================
+            static constexpr IteratorType Iterator_Start = VenumType::values.begin();
+    
+            //==========================================================================================================
             int position { 0 };
             const DataSet *data { nullptr };
         };
@@ -995,13 +990,13 @@ namespace venum
         constexpr static VenumSet all() noexcept
         {
             VenumSet set(DataSet().set());
-            set.msb = VenumType::values().size() - 1;
+            set.msb = VenumType::values.size() - 1;
             return set;
         }
         
         /**
          *  Gets a new VenumSet that contains the opposite constants of the given VenumSet.
-         *  This mean, constants that are set will be remove and the other way around.
+         *  This means, constants that are set will be removed and the other way around.
          *
          *  @param other The other VenumSet to invert
          *  @return The complemented VenumSet
@@ -1093,15 +1088,14 @@ namespace venum
          *  @tparam Constants The constant type
          *  @param constants The constant list to adopt
          */
-        template<class ...Constants>
-        VenumSet(const Constants &...constants) noexcept
+        template<class ...Constants, class = std::enable_if_t<((  std::is_same_v<ConstantType, std::decay_t<Constants>>
+                                                               || std::is_same_v<VenumType,    std::decay_t<Constants>>)
+                                                               && ...)>>
+        VenumSet(Constants &&...constants) noexcept
         {
-            static_assert((std::is_same_v<ConstantType, Constants> &&...),
-                          "Constructor values must be all of the venum's constant type");
-            
-            for (auto &constant : { &constants... })
+            for (const auto &ct : std::array<VenumType, sizeof...(Constants)> { std::forward<Constants>(constants)... })
             {
-                const int ordinal = constant->ordinal();
+                const int ordinal = ct->ordinal();
         
                 if (ordinal > msb)
                 {
@@ -1111,7 +1105,7 @@ namespace venum
                 data[ordinal] = true;
             }
         }
-    
+        
         //==============================================================================================================
         /**
          *  Adds a constant to the set.
@@ -1122,18 +1116,17 @@ namespace venum
          *  @return A pair consisting of an iterator pointing to the element and a boolean denoting whether the element
          *          was freshly inserted or not
          */
-        template<class VenumConstant>
-        std::pair<Iterator, bool> emplace(VenumConstant &&constant) noexcept
+        std::pair<Iterator, bool> emplace(VenumType constant) noexcept
         {
-            if constexpr (std::is_same_v<VenumType, VenumConstant> && canBeNull)
+            if constexpr (canBeNull)
             {
                 if (constant == nullptr)
                 {
-                    return std::make_pair(Iterator(), false);
+                    return std::make_pair(Iterator{}, false);
                 }
             }
             
-            const int ordinal = getOrdinalResponsive(constant);
+            const int ordinal = constant->ordinal();
             
             if (ordinal > msb)
             {
@@ -1141,7 +1134,6 @@ namespace venum
             }
             
             auto bitref = data[ordinal];
-            
             return std::make_pair(Iterator(data, ordinal), !std::exchange(bitref, true));
         }
     
