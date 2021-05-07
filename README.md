@@ -41,7 +41,17 @@ Installation is pretty darn easy. Nothing more than including the venum core hea
 The cmake file included is for running the test included in this repo, which you can find in
 the folder denoted as "test"
 
-To run the test, run the included cmakelists.txt with one of the available
+If your project utilises CMake, you can just add this folder as subfolder and put `venum` in your target links:
+```cmake
+# Add as a subfolder
+add_subdirectory(venum)
+
+# Link against venum
+target_link_libraries(Target PRIVATE venum)
+```
+And that's it, you can now use it as part of your CMake project.
+
+To run the test, run the included CMakeLists.txt with one of the available
 exporters and build your project:
 
 ```bash
