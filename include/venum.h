@@ -221,7 +221,9 @@
 #define VENUM_INTERN_GET_IF_CONSTEXPR(X) VENUM_INTERN_CONCAT(VENUM_INTERN_GET_IF_CONSTEXPR_, X)()
 
 #define VENUM_INTERN_CREATE_ASSOC(ID, VALUES, BODY, ATTRIBUTES) \
-namespace venum::enum_defs \
+namespace venum                                                 \
+{                                                               \
+namespace enum_defs \
 { \
 VENUM_INTERN_SECTOR_CONSTANT_CLASS(ID, (BODY), VENUM_INTERN_GET_CONSTEXPR(ATTRIBUTES)) \
 class VENUM_INTERN_ENUM(ID) \
@@ -253,6 +255,9 @@ public: \
 private: \
     const ConstantType *constantValue VENUM_DEFAULT_POINTER; \
 }; \
+}                                                               \
+\
+template<> struct is_venum_type<enum_defs::VENUM_INTERN_ENUM(ID)> : std::true_type {};  \
 } \
 VENUM_INTERN_GET_ATTRIB(CTOR_PRIVATE, ATTRIBUTES)(ID, VALUES) \
 using ID = venum::enum_defs::VENUM_INTERN_ENUM(ID);
@@ -709,6 +714,11 @@ namespace venum
         return val > max ? max : (val < min ? min : val);
     }
     
+    template<class T> struct is_venum_type : std::false_type {};
+    
+    template<class T>
+    inline constexpr bool is_venum_type_v = is_venum_type<T>::value;
+    
     /**
      *  A simple lightweight map for venum declarations.
      *  This map implementation will map values to constants, since there is only a given amount of constants this
@@ -749,7 +759,7 @@ namespace venum
         {
             for (const auto &value : VenumType::values)
             {
-                data[value.ordinal()] = std::make_pair<VenumType, ValueType>(value, ValueType());
+                data[value->ordinal()] = std::make_pair<VenumType, ValueType>(value, ValueType());
             }
             
             if constexpr (canBeNull)
@@ -904,34 +914,32 @@ namespace venum
             using pointer           = value_type;
     
             //==========================================================================================================
-            VenumSetIterator() = default;
-        
-            VenumSetIterator(const DataSet &data, int position) noexcept
-                : position(position), data(&data)
+            VenumSetIterator(const VenumSet &set, int position = 0) noexcept
+                : position(position), set(set)
             {}
     
             //==========================================================================================================
             bool operator==(const VenumSetIterator &other) const noexcept
             {
-                return position == other.position && data == other.data;
+                return position == other.position && &set == &other.set;
             }
         
             bool operator!=(const VenumSetIterator &other) const noexcept
             {
-                return position != other.position || data != other.data;
+                return position != other.position || &set != &other.set;
             }
     
             //==========================================================================================================
             reference operator*() const
             {
-                auto iterator = (*data)[position] ? Iterator_Start + position : nullptr;
+                auto iterator = set.data.test(position) ? Iterator_Start + position : nullptr;
                 assert(iterator);
                 return *iterator;
             }
         
             pointer operator->() const
             {
-                auto iterator = (*data)[position] ? Iterator_Start + position : nullptr;
+                auto iterator = set.data.test(position) ? Iterator_Start + position : nullptr;
                 assert(iterator);
                 return *iterator;
             }
@@ -939,7 +947,7 @@ namespace venum
             //==========================================================================================================
             VenumSetIterator& operator++()
             {
-                while (++position < data->size() && !(*data)[position]);
+                while (++position <= set.msb && !set.data.test(position));
                 return *this;
             }
         
@@ -952,7 +960,7 @@ namespace venum
         
             VenumSetIterator& operator--()
             {
-                while (--position >= 0 && !(*data)[position]);
+                while (--position > 0 && !set.data.test(position));
                 return *this;
             }
         
@@ -974,7 +982,7 @@ namespace venum
     
             //==========================================================================================================
             int position { 0 };
-            const DataSet *data { nullptr };
+            const VenumSet &set;
         };
     
         //==============================================================================================================
@@ -1122,7 +1130,7 @@ namespace venum
             {
                 if (constant == nullptr)
                 {
-                    return std::make_pair(Iterator{}, false);
+                    return std::make_pair(Iterator(*this), false);
                 }
             }
             
@@ -1134,7 +1142,7 @@ namespace venum
             }
             
             auto bitref = data[ordinal];
-            return std::make_pair(Iterator(data, ordinal), !std::exchange(bitref, true));
+            return std::make_pair(Iterator(*this, ordinal), !std::exchange(bitref, true));
         }
     
         //==============================================================================================================
@@ -1256,12 +1264,12 @@ namespace venum
         Iterator begin() const noexcept
         {
             const int first_index = data._Find_first();
-            return Iterator(data, first_index < data.size() ? first_index : 0);
+            return Iterator(*this, first_index < data.size() ? first_index : 0);
         }
         
         Iterator end() const noexcept
         {
-            return Iterator(data, empty() ? 0 : msb + 1);
+            return Iterator(*this, empty() ? 0 : msb + 1);
         }
         
         ReverseIterator rbegin() const noexcept
